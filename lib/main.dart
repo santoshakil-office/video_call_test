@@ -71,11 +71,14 @@ class _MeetingState extends State<Meeting> {
   @override
   void initState() {
     super.initState();
-    JitsiMeet.addListener(JitsiMeetingListener(
+    JitsiMeet.addListener(
+      JitsiMeetingListener(
         onConferenceWillJoin: _onConferenceWillJoin,
         onConferenceJoined: _onConferenceJoined,
         onConferenceTerminated: _onConferenceTerminated,
-        onError: _onError));
+        onError: _onError,
+      ),
+    );
   }
 
   @override
@@ -197,9 +200,7 @@ class _MeetingState extends State<Meeting> {
             height: 64.0,
             width: double.maxFinite,
             child: ElevatedButton(
-              onPressed: () {
-                _joinMeeting();
-              },
+              onPressed: () => _joinMeeting(),
               child: Text(
                 "Join Meeting",
                 style: TextStyle(color: Colors.white),
@@ -217,23 +218,11 @@ class _MeetingState extends State<Meeting> {
     );
   }
 
-  _onAudioOnlyChanged(bool? value) {
-    setState(() {
-      isAudioOnly = value;
-    });
-  }
+  _onAudioOnlyChanged(bool? value) => setState(() => isAudioOnly = value);
 
-  _onAudioMutedChanged(bool? value) {
-    setState(() {
-      isAudioMuted = value;
-    });
-  }
+  _onAudioMutedChanged(bool? value) => setState(() => isAudioMuted = value);
 
-  _onVideoMutedChanged(bool? value) {
-    setState(() {
-      isVideoMuted = value;
-    });
-  }
+  _onVideoMutedChanged(bool? value) => setState(() => isVideoMuted = value);
 
   _joinMeeting() async {
     String? serverUrl = serverText.text.trim().isEmpty ? null : serverText.text;
@@ -271,38 +260,30 @@ class _MeetingState extends State<Meeting> {
     await JitsiMeet.joinMeeting(
       options,
       listener: JitsiMeetingListener(
-          onConferenceWillJoin: (message) {
-            debugPrint("${options.room} will join with message: $message");
-          },
-          onConferenceJoined: (message) {
-            debugPrint("${options.room} joined with message: $message");
-          },
-          onConferenceTerminated: (message) {
-            debugPrint("${options.room} terminated with message: $message");
-          },
-          genericListeners: [
-            JitsiGenericListener(
-                eventName: 'readyToClose',
-                callback: (dynamic message) {
-                  debugPrint("readyToClose callback");
-                }),
-          ]),
+        onConferenceWillJoin: (message) =>
+            debugPrint("${options.room} will join with message: $message"),
+        onConferenceJoined: (message) =>
+            debugPrint("${options.room} joined with message: $message"),
+        onConferenceTerminated: (message) =>
+            debugPrint("${options.room} terminated with message: $message"),
+        genericListeners: [
+          JitsiGenericListener(
+            eventName: 'readyToClose',
+            callback: (dynamic message) => debugPrint("readyToClose callback"),
+          ),
+        ],
+      ),
     );
   }
 
-  void _onConferenceWillJoin(message) {
-    debugPrint("_onConferenceWillJoin broadcasted with message: $message");
-  }
+  void _onConferenceWillJoin(message) =>
+      debugPrint("_onConferenceWillJoin broadcasted with message: $message");
 
-  void _onConferenceJoined(message) {
-    debugPrint("_onConferenceJoined broadcasted with message: $message");
-  }
+  void _onConferenceJoined(message) =>
+      debugPrint("_onConferenceJoined broadcasted with message: $message");
 
-  void _onConferenceTerminated(message) {
-    debugPrint("_onConferenceTerminated broadcasted with message: $message");
-  }
+  void _onConferenceTerminated(message) =>
+      debugPrint("_onConferenceTerminated broadcasted with message: $message");
 
-  _onError(error) {
-    debugPrint("_onError broadcasted: $error");
-  }
+  _onError(error) => debugPrint("_onError broadcasted: $error");
 }
